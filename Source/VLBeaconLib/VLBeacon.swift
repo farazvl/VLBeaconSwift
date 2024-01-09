@@ -3,15 +3,17 @@
 
 import Foundation
 
-public final class VLBeacon {
+
+final public class VLBeacon {
+    private static let sharedInstance = VLBeacon()
     
-    public static let sharedInstance: VLBeacon = {
-        let instance = VLBeacon()
-        instance.setupConfiguration()
-        return instance
-    }()
+    public class func getInstance()-> VLBeacon {
+        return sharedInstance
+    }
     
-    private init() {}
+    private init() {
+        print("VLBeacon init");
+    }
     
     private let bundleIdentifier = "com.viewlift.beacon"
     
@@ -40,12 +42,17 @@ public final class VLBeacon {
         }
     }
     
+    
+    public var disabledTracking: Bool = false
+    
+
     public func startSyncBeaconEvents() {
+        self.setupConfiguration()
         
         let sharedSyncManager = BeaconSyncManager.sharedInstance
         
-        if NetworkStatus.sharedInstance.isNetworkAvailable() {
-            if let authToken = VLBeacon.sharedInstance.authorizationToken {
+        if NetworkStatus.sharedInstance.isNetworkAvailable() && !disabledTracking {
+            if let authToken = authorizationToken {
                 sharedSyncManager.startSyncingTheEvents(authenticationToken: authToken, withSuccess: {(_ success: Bool) -> Void in
                 })
             }
@@ -53,11 +60,13 @@ public final class VLBeacon {
     }
     
     public func triggerBeaconEvent(_ eventStructBody: BeaconEventBodyProtocol) {
+        guard let authToken = self.authorizationToken, !disabledTracking else { return }
+        
         if var event = eventStructBody as? PlayerBeaconEventStruct {
             event.tveProvider = tveProvider
-            event.triggerEvents()
+            event.triggerEvents(authToken: authToken)
         } else {
-            eventStructBody.triggerEvents()
+            eventStructBody.triggerEvents(authToken: authToken)
         }
     }
     

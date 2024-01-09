@@ -26,13 +26,13 @@ public struct AuthenticationPayload: BeaconEventPayloadProtocol {
             self.existingUser = String(existingUser)
         }
         
-        if let emailID = VLBeacon.sharedInstance.tokenIdentity?.emailId {
+        if let emailID = VLBeacon.getInstance().tokenIdentity?.emailId {
             self.email = emailID
         } else {
             self.email = email
         }
         
-        if let phoneNumber = VLBeacon.sharedInstance.tokenIdentity?.phoneNumber {
+        if let phoneNumber = VLBeacon.getInstance().tokenIdentity?.phoneNumber {
             self.phoneNo = phoneNumber
         } else {
             self.phoneNo = phoneNumber

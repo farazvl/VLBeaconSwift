@@ -9,7 +9,7 @@ import Foundation
 
 enum APIUrl {
     static func getAPIBaseUrl() -> String? {
-        return VLBeacon.sharedInstance.beaconBaseUrl
+        return VLBeacon.getInstance().beaconBaseUrl
     }
 }
 

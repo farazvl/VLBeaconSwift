@@ -84,8 +84,8 @@ public struct PlayerBeaconEventStruct {
         self.appversion = appversion
         self.duration = duration
         
-		self.aid = VLBeacon.sharedInstance.tokenIdentity?.siteName ?? ""
-		self.cid = VLBeacon.sharedInstance.tokenIdentity?.siteId ?? ""
+		self.aid = VLBeacon.getInstance().tokenIdentity?.siteName ?? ""
+		self.cid = VLBeacon.getInstance().tokenIdentity?.siteId ?? ""
         
         if let apos {
             self.apos = String(describing: apos)
@@ -121,25 +121,25 @@ public struct PlayerBeaconEventStruct {
             self.bufferHealth = String(describing: bufferHealth)
         }
         
-        if let userID = VLBeacon.sharedInstance.tokenIdentity?.userId {
+        if let userID = VLBeacon.getInstance().tokenIdentity?.userId {
             self.uid = userID
         } else {
             self.uid = userId
         }
         
-        if let deviceID = VLBeacon.sharedInstance.tokenIdentity?.deviceId {
+        if let deviceID = VLBeacon.getInstance().tokenIdentity?.deviceId {
             self.deviceid = deviceID
         } else {
             self.deviceid = Utility.sharedInstance.getUUID()
         }
         
-        if let siteID = VLBeacon.sharedInstance.tokenIdentity?.siteId {
+        if let siteID = VLBeacon.getInstance().tokenIdentity?.siteId {
             self.siteid = siteID
         } else {
             self.siteid = siteId
         }
         
-        if let environment = VLBeacon.sharedInstance.tokenIdentity?.siteName?.getEnvironment()?.rawValue {
+        if let environment = VLBeacon.getInstance().tokenIdentity?.siteName?.getEnvironment()?.rawValue {
             self.environment = environment
         } else {
             self.environment = environment
@@ -174,9 +174,8 @@ public struct PlayerBeaconEventStruct {
 
 extension PlayerBeaconEventStruct: BeaconEventBodyProtocol {
     
-    public func triggerEvents() {
-        
-        if let beaconBaseURL = APIUrl.getAPIBaseUrl(), let authToken = VLBeacon.sharedInstance.authorizationToken {
+    public func triggerEvents(authToken: String) {
+        if let beaconBaseURL = APIUrl.getAPIBaseUrl(){
 			DispatchQueue.global(qos: .utility).async {
 				DataManger().postBeaconEvents(beaconStructBody: self, authenticationToken: authToken, baseUrl: beaconBaseURL + APIUrlEndPoint.playerBeacon.rawValue)
 			}
